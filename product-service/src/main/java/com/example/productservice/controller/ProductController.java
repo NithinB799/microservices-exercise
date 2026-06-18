@@ -1,6 +1,6 @@
 package com.example.productservice.controller;
 
-import com.example.productservice.model.Product;
+import com.example.productservice.model.ProductEntity;
 import com.example.productservice.repository.ProductRepository;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +17,7 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<Product> getAllProducts() {
+    public List<ProductEntity> getAllProducts() {
         return productRepository.findAll();
     }
 }
