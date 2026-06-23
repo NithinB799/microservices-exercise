@@ -57,4 +57,10 @@ public class ProductController {
     public List<String> getProductNames() {
         return productService.getProductNames();
     }
+
+    @GetMapping("/price")
+    public List<Product> getProductsAbovePrice(@RequestParam Double price) {
+        return productService.getProductsAbovePrice(price);
+    }
+
 }

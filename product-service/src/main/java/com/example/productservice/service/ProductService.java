@@ -62,5 +62,9 @@ public class ProductService {
                 .map(Product::getName)
                 .toList();
     }
+
+    public List<Product> getProductsAbovePrice(Double price) {
+        return productRepository.findProductsAbovePrice(price);//added in 1G
+    }
 }
 
