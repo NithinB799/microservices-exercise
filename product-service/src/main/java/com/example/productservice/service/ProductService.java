@@ -7,6 +7,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
 @Service
 public class ProductService {
 
@@ -37,4 +42,25 @@ public class ProductService {
 
         return product.get().getStock() >= quantity;
     }
+    public Page<Product> getProductsWithPagingAndSorting(int pageNumber,
+                                                         int pageSize,
+                                                         String sortField) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortField));
+        return productRepository.findAll(pageable);
+    }
+
+    public List<Product> filterProductsByStock(Integer minimumStock) {
+        return productRepository.findAll()
+                .stream()
+                .filter(product -> product.getStock() >= minimumStock)
+                .toList();
+    }
+
+    public List<String> getProductNames() {
+        return productRepository.findAll()
+                .stream()
+                .map(Product::getName)
+                .toList();
+    }
 }
+

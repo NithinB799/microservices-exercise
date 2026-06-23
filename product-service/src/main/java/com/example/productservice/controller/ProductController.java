@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;//added in 1F.
+
 @RestController
 @RequestMapping("/products")
 public class ProductController {
@@ -36,5 +38,23 @@ public class ProductController {
     public boolean checkStock(@PathVariable Long id,
                               @RequestParam Integer quantity) {
         return productService.isStockAvailable(id, quantity);
+    }
+    @GetMapping("/paged")
+    public Page<Product> getProductsWithPagingAndSorting(
+            @RequestParam int pageNumber,
+            @RequestParam int pageSize,
+            @RequestParam String sortField) {
+
+        return productService.getProductsWithPagingAndSorting(pageNumber, pageSize, sortField);
+    }
+
+    @GetMapping("/filter")
+    public List<Product> filterProductsByStock(@RequestParam Integer minimumStock) {
+        return productService.filterProductsByStock(minimumStock);
+    }
+
+    @GetMapping("/names")
+    public List<String> getProductNames() {
+        return productService.getProductNames();
     }
 }

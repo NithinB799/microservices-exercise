@@ -1,4 +1,4 @@
-package controller;
+package com.example.cartservice.controller;
 
 import com.example.cartservice.entity.Cart;
 import com.example.cartservice.entity.CartItem;
