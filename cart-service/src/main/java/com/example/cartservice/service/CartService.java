@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class CartService {
@@ -36,17 +37,22 @@ public class CartService {
 
     public CartItem addItemToCart(CartItem cartItem) {
 
-        ProductResponse product = webClient.get()
-                .uri("/products/" + cartItem.getProductId())
-                .retrieve()
-                .bodyToMono(ProductResponse.class)
-                .block();
+        CompletableFuture<ProductResponse> productFuture =
+                CompletableFuture.supplyAsync(() -> fetchProduct(cartItem.getProductId()));
+
+        CompletableFuture<Boolean> stockValidationFuture =
+                productFuture.thenApplyAsync(product ->
+                        validateStock(product, cartItem.getQuantity())
+                );
+
+        ProductResponse product = productFuture.join();
+        Boolean stockValid = stockValidationFuture.join();
 
         if (product == null || product.getId() == null) {
             throw new RuntimeException("Product does not exist");
         }
 
-        if (product.getStock() < cartItem.getQuantity()) {
+        if (!stockValid) {
             throw new RuntimeException("Insufficient stock");
         }
 
@@ -61,6 +67,26 @@ public class CartService {
         kafkaProducerService.sendCartEvent(cartEvent);
 
         return savedItem;
+    }
+
+    private ProductResponse fetchProduct(Long productId) {
+        System.out.println("Fetching product on thread: " + Thread.currentThread().getName());
+
+        return webClient.get()
+                .uri("/products/" + productId)
+                .retrieve()
+                .bodyToMono(ProductResponse.class)
+                .block();
+    }
+
+    private Boolean validateStock(ProductResponse product, Integer quantity) {
+        System.out.println("Validating stock on thread: " + Thread.currentThread().getName());
+
+        if (product == null || product.getId() == null) {
+            return false;
+        }
+
+        return product.getStock() >= quantity;
     }
 
     public List<CartItem> getAllCartItems() {
