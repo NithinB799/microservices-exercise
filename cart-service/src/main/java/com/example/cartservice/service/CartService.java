@@ -1,5 +1,6 @@
 package com.example.cartservice.service;
 
+import com.example.cartservice.dto.CartEvent;
 import com.example.cartservice.dto.ProductResponse;
 import com.example.cartservice.entity.Cart;
 import com.example.cartservice.entity.CartItem;
@@ -16,11 +17,14 @@ public class CartService {
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
     private final WebClient webClient;
+    private final KafkaProducerService kafkaProducerService;
 
     public CartService(CartRepository cartRepository,
-                       CartItemRepository cartItemRepository) {
+                       CartItemRepository cartItemRepository,
+                       KafkaProducerService kafkaProducerService) {
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
+        this.kafkaProducerService = kafkaProducerService;
         this.webClient = WebClient.builder()
                 .baseUrl("http://localhost:8081")
                 .build();
@@ -46,7 +50,17 @@ public class CartService {
             throw new RuntimeException("Insufficient stock");
         }
 
-        return cartItemRepository.save(cartItem);
+        CartItem savedItem = cartItemRepository.save(cartItem);
+
+        CartEvent cartEvent = new CartEvent(
+                savedItem.getCartId(),
+                savedItem.getProductId(),
+                savedItem.getQuantity()
+        );
+
+        kafkaProducerService.sendCartEvent(cartEvent);
+
+        return savedItem;
     }
 
     public List<CartItem> getAllCartItems() {
