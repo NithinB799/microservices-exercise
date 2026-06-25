@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProducts } from '../features/productSlice';
+import { fetchPaginatedProducts } from '../features/productSlice';
 import { addCartItem } from '../features/cartSlice';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
@@ -8,14 +8,18 @@ import ErrorMessage from '../components/ErrorMessage';
 function ProductListPage() {
     const dispatch = useDispatch();
 
-    const { products, loading, error } = useSelector((state) => state.products);
+    const { products, totalPages, currentPage, loading, error } = useSelector(
+        (state) => state.products
+    );
 
     const [searchText, setSearchText] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
+    const pageSize = 5;
+    const sortBy = 'id';
 
     useEffect(() => {
-        dispatch(fetchProducts());
-    }, [dispatch]);
+        dispatch(fetchPaginatedProducts({ page: currentPage, size: pageSize, sortBy }));
+    }, [dispatch, currentPage]);
 
     const filteredProducts = useMemo(() => {
         return products.filter((product) => {
@@ -29,6 +33,22 @@ function ProductListPage() {
             return matchesName && matchesPrice;
         });
     }, [products, searchText, maxPrice]);
+
+    const handlePageChange = (pageNumber) => {
+        dispatch(fetchPaginatedProducts({ page: pageNumber, size: pageSize, sortBy }));
+    };
+
+    const handlePrevious = () => {
+        if (currentPage > 0) {
+            handlePageChange(currentPage - 1);
+        }
+    };
+
+    const handleNext = () => {
+        if (currentPage < totalPages - 1) {
+            handlePageChange(currentPage + 1);
+        }
+    };
 
     const handleAddToCart = async (productId) => {
         const cartItem = {
@@ -101,6 +121,28 @@ function ProductListPage() {
                 ))}
                 </tbody>
             </table>
+
+            <br />
+
+            <div>
+                <button onClick={handlePrevious} disabled={currentPage === 0}>
+                    Previous
+                </button>
+
+                {Array.from({ length: totalPages }, (_, index) => (
+                    <button
+                        key={index}
+                        onClick={() => handlePageChange(index)}
+                        disabled={currentPage === index}
+                    >
+                        {index + 1}
+                    </button>
+                ))}
+
+                <button onClick={handleNext} disabled={currentPage === totalPages - 1}>
+                    Next
+                </button>
+            </div>
         </div>
     );
 }
