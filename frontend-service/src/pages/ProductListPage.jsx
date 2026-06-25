@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts } from '../features/productSlice';
+import { addCartItem } from '../features/cartSlice';
 
 function ProductListPage() {
     const dispatch = useDispatch();
@@ -10,6 +11,18 @@ function ProductListPage() {
     useEffect(() => {
         dispatch(fetchProducts());
     }, [dispatch]);
+
+    const handleAddToCart = async (productId) => {
+        const cartItem = {
+            cartId: 4,
+            productId: productId,
+            quantity: 1
+        };
+
+        await dispatch(addCartItem(cartItem));
+
+        alert('Product added to cart successfully!');
+    };
 
     return (
         <div>
@@ -26,6 +39,7 @@ function ProductListPage() {
                     <th>Name</th>
                     <th>Price</th>
                     <th>Stock</th>
+                    <th>Action</th>
                 </tr>
                 </thead>
 
@@ -36,6 +50,11 @@ function ProductListPage() {
                         <td>{product.name}</td>
                         <td>{product.price}</td>
                         <td>{product.stock}</td>
+                        <td>
+                            <button onClick={() => handleAddToCart(product.id)}>
+                                Add to Cart
+                            </button>
+                        </td>
                     </tr>
                 ))}
                 </tbody>
