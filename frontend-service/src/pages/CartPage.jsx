@@ -1,3 +1,5 @@
+import LoadingSpinner from '../components/LoadingSpinner';
+import ErrorMessage from '../components/ErrorMessage';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCartItems } from '../features/cartSlice';
@@ -16,10 +18,9 @@ function CartPage() {
         <div>
             <h2>Cart Items</h2>
 
-            {loading && <p>Loading cart items...</p>}
+            {loading && <LoadingSpinner />}
 
-            {error && <p>{error}</p>}
-
+            {error && <ErrorMessage message={error} />}
             <table border="1" cellPadding="10">
                 <thead>
                 <tr>

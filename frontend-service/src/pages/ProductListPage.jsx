@@ -1,3 +1,5 @@
+import LoadingSpinner from '../components/LoadingSpinner';
+import ErrorMessage from '../components/ErrorMessage';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts } from '../features/productSlice';
@@ -28,9 +30,9 @@ function ProductListPage() {
         <div>
             <h2>Product List</h2>
 
-            {loading && <p>Loading products...</p>}
+            {loading && <LoadingSpinner />}
 
-            {error && <p>{error}</p>}
+            {error && <ErrorMessage message={error} />}
 
             <table border="1" cellPadding="10">
                 <thead>
