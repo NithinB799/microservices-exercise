@@ -1,6 +1,8 @@
 package com.example.cartservice.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "cart_items")
@@ -14,6 +16,8 @@ public class CartItem {
 
     private Long productId;
 
+    @NotNull(message = "Quantity cannot be null")
+    @Min(value = 1, message = "Quantity must be greater than 0")
     private Integer quantity;
 
     public CartItem() {
