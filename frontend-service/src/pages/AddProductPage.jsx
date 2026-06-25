@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { createProduct } from '../services/productService';
+import { useDispatch } from 'react-redux';
+import { addProduct } from '../features/productSlice';
 
 function AddProductPage() {
+    const dispatch = useDispatch();
 
     const [product, setProduct] = useState({
         name: '',
@@ -19,9 +21,9 @@ function AddProductPage() {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        await createProduct(product);
+        await dispatch(addProduct(product));
 
-        alert("Product created successfully!");
+        alert('Product created successfully!');
 
         setProduct({
             name: '',
@@ -35,9 +37,8 @@ function AddProductPage() {
             <h2>Add Product</h2>
 
             <form onSubmit={handleSubmit}>
-
                 <div>
-                    <label>Name :</label>
+                    <label>Name: </label>
                     <input
                         type="text"
                         name="name"
@@ -50,7 +51,7 @@ function AddProductPage() {
                 <br />
 
                 <div>
-                    <label>Price :</label>
+                    <label>Price: </label>
                     <input
                         type="number"
                         name="price"
@@ -63,7 +64,7 @@ function AddProductPage() {
                 <br />
 
                 <div>
-                    <label>Stock :</label>
+                    <label>Stock: </label>
                     <input
                         type="number"
                         name="stock"
@@ -75,10 +76,7 @@ function AddProductPage() {
 
                 <br />
 
-                <button type="submit">
-                    Add Product
-                </button>
-
+                <button type="submit">Add Product</button>
             </form>
         </div>
     );

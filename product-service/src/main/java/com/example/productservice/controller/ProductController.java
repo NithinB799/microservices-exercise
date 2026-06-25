@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;//added in 1F.
 
 @RestController
 @RequestMapping("/products")
+@CrossOrigin(origins = "*")
 public class ProductController {
 
     private final ProductService productService;

@@ -1,21 +1,23 @@
-import { useEffect, useState } from 'react';
-import { getAllProducts } from '../services/productService';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchProducts } from '../features/productSlice';
 
 function ProductListPage() {
-    const [products, setProducts] = useState([]);
+    const dispatch = useDispatch();
+
+    const { products, loading, error } = useSelector((state) => state.products);
 
     useEffect(() => {
-        loadProducts();
-    }, []);
-
-    const loadProducts = async () => {
-        const data = await getAllProducts();
-        setProducts(data);
-    };
+        dispatch(fetchProducts());
+    }, [dispatch]);
 
     return (
         <div>
             <h2>Product List</h2>
+
+            {loading && <p>Loading products...</p>}
+
+            {error && <p>{error}</p>}
 
             <table border="1" cellPadding="10">
                 <thead>
