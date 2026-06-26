@@ -1,18 +1,9 @@
+import useCart from '../hooks/useCart';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchCartItems } from '../features/cartSlice';
 
 function CartPage() {
-
-    const dispatch = useDispatch();
-
-    const { cartItems, loading, error } = useSelector((state) => state.cart);
-
-    useEffect(() => {
-        dispatch(fetchCartItems());
-    }, [dispatch]);
+    const { cartItems, loading, error } = useCart();
 
     return (
         <div>
@@ -21,6 +12,7 @@ function CartPage() {
             {loading && <LoadingSpinner />}
 
             {error && <ErrorMessage message={error} />}
+
             <table border="1" cellPadding="10">
                 <thead>
                 <tr>
@@ -39,9 +31,7 @@ function CartPage() {
                     </tr>
                 ))}
                 </tbody>
-
             </table>
-
         </div>
     );
 }

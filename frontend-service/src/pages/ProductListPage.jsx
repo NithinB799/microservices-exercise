@@ -1,25 +1,21 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchPaginatedProducts } from '../features/productSlice';
-import { addCartItem } from '../features/cartSlice';
+import { useMemo, useState } from 'react';
+import useProducts from '../hooks/useProducts';
+import useAddToCart from '../hooks/useAddToCart';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
 
 function ProductListPage() {
-    const dispatch = useDispatch();
-
-    const { products, totalPages, currentPage, loading, error } = useSelector(
-        (state) => state.products
-    );
-
+    const [currentPage, setCurrentPage] = useState(0);
     const [searchText, setSearchText] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
+
     const pageSize = 5;
     const sortBy = 'id';
 
-    useEffect(() => {
-        dispatch(fetchPaginatedProducts({ page: currentPage, size: pageSize, sortBy }));
-    }, [dispatch, currentPage]);
+    const { products, totalPages, loading, error } =
+        useProducts(currentPage, pageSize, sortBy);
+
+    const { handleAddToCart } = useAddToCart();
 
     const filteredProducts = useMemo(() => {
         return products.filter((product) => {
@@ -34,32 +30,16 @@ function ProductListPage() {
         });
     }, [products, searchText, maxPrice]);
 
-    const handlePageChange = (pageNumber) => {
-        dispatch(fetchPaginatedProducts({ page: pageNumber, size: pageSize, sortBy }));
-    };
-
     const handlePrevious = () => {
         if (currentPage > 0) {
-            handlePageChange(currentPage - 1);
+            setCurrentPage(currentPage - 1);
         }
     };
 
     const handleNext = () => {
         if (currentPage < totalPages - 1) {
-            handlePageChange(currentPage + 1);
+            setCurrentPage(currentPage + 1);
         }
-    };
-
-    const handleAddToCart = async (productId) => {
-        const cartItem = {
-            cartId: 4,
-            productId: productId,
-            quantity: 1
-        };
-
-        await dispatch(addCartItem(cartItem));
-
-        alert('Product added to cart successfully!');
     };
 
     return (
@@ -132,7 +112,7 @@ function ProductListPage() {
                 {Array.from({ length: totalPages }, (_, index) => (
                     <button
                         key={index}
-                        onClick={() => handlePageChange(index)}
+                        onClick={() => setCurrentPage(index)}
                         disabled={currentPage === index}
                     >
                         {index + 1}
