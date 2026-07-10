@@ -1,6 +1,9 @@
 package com.example.productservice.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 
 @Entity
 @Table(name = "products")
@@ -10,10 +13,13 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Product name is required")
     private String name;
 
+    @Positive(message = "Price must be greater than zero")
     private Double price;
 
+    @PositiveOrZero(message = "Stock cannot be negative")
     private Integer stock;
 
     public Product() {

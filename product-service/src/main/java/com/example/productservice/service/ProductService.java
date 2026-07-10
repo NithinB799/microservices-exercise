@@ -66,5 +66,6 @@ public class ProductService {
     public List<Product> getProductsAbovePrice(Double price) {
         return productRepository.findProductsAbovePrice(price);//added in 1G
     }
+
 }
 

@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import jakarta.validation.Valid;
 
 import org.springframework.data.domain.Page;//added in 1F.
 
@@ -21,7 +22,7 @@ public class ProductController {
     }
 
     @PostMapping
-    public Product createProduct(@RequestBody Product product) {
+    public Product createProduct(@Valid @RequestBody Product product) {
         return productService.createProduct(product);
     }
 
