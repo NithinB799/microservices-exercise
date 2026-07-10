@@ -1,5 +1,6 @@
 import { useDispatch } from 'react-redux';
 import { addCartItem } from '../features/cartSlice';
+import { fetchPaginatedProducts } from '../features/productSlice';
 
 function useAddToCart() {
     const dispatch = useDispatch();
@@ -11,9 +12,26 @@ function useAddToCart() {
             quantity: 1
         };
 
-        await dispatch(addCartItem(cartItem));
+        try {
+            await dispatch(addCartItem(cartItem)).unwrap();
 
-        alert('Product added to cart successfully!');
+            await dispatch(
+                fetchPaginatedProducts({
+                    page: 0,
+                    size: 5,
+                    sortBy: 'id'
+                })
+            );
+
+            alert('Product added to cart successfully!');
+        } catch (error) {
+            alert(
+                error?.error ||
+                error?.message ||
+                error ||
+                'Failed to add product to cart'
+            );
+        }
     };
 
     return {

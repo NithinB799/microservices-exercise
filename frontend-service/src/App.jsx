@@ -1,22 +1,54 @@
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import AppRoutes from './routes/AppRoutes';
 
 function App() {
     return (
-        <div>
-            <h1>Enterprise Product Management</h1>
+        <div className="app">
+            <header className="app-header">
+                <div className="navbar">
+                    <div className="brand">
+                        <span className="brand-icon">◈</span>
 
-            <nav>
-                <Link to="/products">Products</Link>
-                {' | '}
-                <Link to="/add-product">Add Product</Link>
-                {' | '}
-                <Link to="/cart">Cart</Link>
-            </nav>
+                        <div>
+                            <h1>ProductHub</h1>
+                            <p>Enterprise Product Management</p>
+                        </div>
+                    </div>
 
-            <hr />
+                    <nav className="nav-links">
+                        <NavLink
+                            to="/products"
+                            className={({ isActive }) =>
+                                isActive ? 'nav-link active' : 'nav-link'
+                            }
+                        >
+                            Products
+                        </NavLink>
 
-            <AppRoutes />
+                        <NavLink
+                            to="/add-product"
+                            className={({ isActive }) =>
+                                isActive ? 'nav-link active' : 'nav-link'
+                            }
+                        >
+                            Add Product
+                        </NavLink>
+
+                        <NavLink
+                            to="/cart"
+                            className={({ isActive }) =>
+                                isActive ? 'nav-link active' : 'nav-link'
+                            }
+                        >
+                            Cart
+                        </NavLink>
+                    </nav>
+                </div>
+            </header>
+
+            <main className="main-content">
+                <AppRoutes />
+            </main>
         </div>
     );
 }

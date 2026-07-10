@@ -21,64 +21,80 @@ function AddProductPage() {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        await dispatch(addProduct(product));
+        try {
+            await dispatch(addProduct(product)).unwrap();
 
-        alert('Product created successfully!');
+            alert('Product created successfully!');
 
-        setProduct({
-            name: '',
-            price: '',
-            stock: ''
-        });
+            setProduct({
+                name: '',
+                price: '',
+                stock: ''
+            });
+
+        } catch (error) {
+            alert(
+                error?.error ||
+                error?.message ||
+                error ||
+                'Failed to create product'
+            );
+        }
     };
 
     return (
-        <div>
-            <h2>Add Product</h2>
-
-            <form onSubmit={handleSubmit}>
+        <section className="page-section">
+            <div className="page-heading">
                 <div>
-                    <label>Name: </label>
-                    <input
-                        type="text"
-                        name="name"
-                        value={product.name}
-                        onChange={handleChange}
-                        required
-                    />
+                    <h2>Add Product</h2>
+                    <p>Create a new product and save it to the product service.</p>
                 </div>
+            </div>
 
-                <br />
+            <div className="form-card">
+                <form onSubmit={handleSubmit} className="product-form">
+                    <div className="field">
+                        <label>Product Name</label>
+                        <input
+                            type="text"
+                            name="name"
+                            value={product.name}
+                            onChange={handleChange}
+                            placeholder="Example: Keyboard"
+                            required
+                        />
+                    </div>
 
-                <div>
-                    <label>Price: </label>
-                    <input
-                        type="number"
-                        name="price"
-                        value={product.price}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
+                    <div className="field">
+                        <label>Price</label>
+                        <input
+                            type="number"
+                            name="price"
+                            value={product.price}
+                            onChange={handleChange}
+                            placeholder="Example: 1500"
+                            required
+                        />
+                    </div>
 
-                <br />
+                    <div className="field">
+                        <label>Stock</label>
+                        <input
+                            type="number"
+                            name="stock"
+                            value={product.stock}
+                            onChange={handleChange}
+                            placeholder="Example: 20"
+                            required
+                        />
+                    </div>
 
-                <div>
-                    <label>Stock: </label>
-                    <input
-                        type="number"
-                        name="stock"
-                        value={product.stock}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-
-                <br />
-
-                <button type="submit">Add Product</button>
-            </form>
-        </div>
+                    <button type="submit" className="submit-button">
+                        Add Product
+                    </button>
+                </form>
+            </div>
+        </section>
     );
 }
 

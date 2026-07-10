@@ -19,7 +19,9 @@ function ProductListPage() {
 
     const filteredProducts = useMemo(() => {
         return products.filter((product) => {
-            const matchesName = product.name
+            const productName = product.name || '';
+
+            const matchesName = productName
                 .toLowerCase()
                 .includes(searchText.toLowerCase());
 
@@ -43,68 +45,87 @@ function ProductListPage() {
     };
 
     return (
-        <div>
-            <h2>Product List</h2>
-
-            <div>
-                <label>Search by Name: </label>
-                <input
-                    type="text"
-                    value={searchText}
-                    onChange={(event) => setSearchText(event.target.value)}
-                    placeholder="Search product"
-                />
+        <section className="page-section">
+            <div className="page-heading">
+                <div>
+                    <h2>Products</h2>
+                    <p>Browse, search, filter, and add products to the cart.</p>
+                </div>
             </div>
 
-            <br />
+            <div className="toolbar">
+                <div className="field">
+                    <label>Search by name</label>
+                    <input
+                        type="text"
+                        value={searchText}
+                        onChange={(event) => setSearchText(event.target.value)}
+                        placeholder="Example: Laptop"
+                    />
+                </div>
 
-            <div>
-                <label>Filter by Max Price: </label>
-                <input
-                    type="number"
-                    value={maxPrice}
-                    onChange={(event) => setMaxPrice(event.target.value)}
-                    placeholder="Enter max price"
-                />
+                <div className="field">
+                    <label>Max price</label>
+                    <input
+                        type="number"
+                        value={maxPrice}
+                        onChange={(event) => setMaxPrice(event.target.value)}
+                        placeholder="Example: 1000"
+                    />
+                </div>
             </div>
-
-            <br />
 
             {loading && <LoadingSpinner />}
 
             {error && <ErrorMessage message={error} />}
 
-            <table border="1" cellPadding="10">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>Stock</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
+            <div className="card">
+                <div className="table-wrapper">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
 
-                <tbody>
-                {filteredProducts.map((product) => (
-                    <tr key={product.id}>
-                        <td>{product.id}</td>
-                        <td>{product.name}</td>
-                        <td>{product.price}</td>
-                        <td>{product.stock}</td>
-                        <td>
-                            <button onClick={() => handleAddToCart(product.id)}>
-                                Add to Cart
-                            </button>
-                        </td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
+                        <tbody>
+                        {filteredProducts.length === 0 ? (
+                            <tr>
+                                <td colSpan="5" className="empty-state">
+                                    No products found.
+                                </td>
+                            </tr>
+                        ) : (
+                            filteredProducts.map((product) => (
+                                <tr key={product.id}>
+                                    <td>{product.id}</td>
+                                    <td>
+                                        <strong>{product.name || 'Unnamed product'}</strong>
+                                    </td>
+                                    <td>${Number(product.price || 0).toLocaleString()}</td>
+                                    <td>
+                                            <span className="badge">
+                                                {product.stock ?? 0} in stock
+                                            </span>
+                                    </td>
+                                    <td>
+                                        <button onClick={() => handleAddToCart(product.id)}>
+                                            Add to Cart
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-            <br />
-
-            <div>
+            <div className="pagination">
                 <button onClick={handlePrevious} disabled={currentPage === 0}>
                     Previous
                 </button>
@@ -114,6 +135,7 @@ function ProductListPage() {
                         key={index}
                         onClick={() => setCurrentPage(index)}
                         disabled={currentPage === index}
+                        className={currentPage === index ? 'page-active' : ''}
                     >
                         {index + 1}
                     </button>
@@ -123,7 +145,7 @@ function ProductListPage() {
                     Next
                 </button>
             </div>
-        </div>
+        </section>
     );
 }
 
