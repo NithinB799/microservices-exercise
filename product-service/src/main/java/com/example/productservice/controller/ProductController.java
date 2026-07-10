@@ -8,7 +8,18 @@ import java.util.List;
 import java.util.Optional;
 import jakarta.validation.Valid;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+
 import org.springframework.data.domain.Page;//added in 1F.
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+
+
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/products")
@@ -63,6 +74,55 @@ public class ProductController {
     @GetMapping("/price")
     public List<Product> getProductsAbovePrice(@RequestParam Double price) {
         return productService.getProductsAbovePrice(price);
+    }
+    @PutMapping("/{id}")
+    public Product updateProduct(
+            @PathVariable Long id,
+            @Valid @RequestBody Product product) {
+
+        return productService.updateProduct(id, product);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/page")
+    public Page<Product> getProductsWithPaginationAndSorting(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        return productService.getProductsWithPaginationAndSorting(
+                page,
+                size,
+                sortBy,
+                direction
+        );
+    }
+    @GetMapping("/search")
+    public Page<Product> searchProducts(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) Integer minStock,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        return productService.searchProducts(
+                name,
+                minPrice,
+                maxPrice,
+                minStock,
+                page,
+                size,
+                sortBy,
+                direction
+        );
     }
 
 }

@@ -1,14 +1,20 @@
 package com.example.productservice.repository;
 
 import com.example.productservice.model.Product;
-import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;//added in 1G
-import org.springframework.data.repository.query.Param;//added in 1G
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
-public interface ProductRepository extends JpaRepository<Product, Long> {
+import java.util.List;
 
-    @Query(value = "SELECT * FROM products WHERE price > :price", nativeQuery = true)
+public interface ProductRepository extends
+        JpaRepository<Product, Long>,
+        JpaSpecificationExecutor<Product> {
+
+    @Query(
+            value = "SELECT * FROM products WHERE price > :price",
+            nativeQuery = true
+    )
     List<Product> findProductsAbovePrice(@Param("price") Double price);
-
 }
